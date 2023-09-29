@@ -2,7 +2,9 @@
 Bayesian low-rank adaptation for large language models
 
 To install `laplace-lora`, change directory to `laplace-lora` and run 
-```pip install -e.```
+```
+pip install -e.
+```
 
 To fine-tune LlaMA2 or any GPT-like model on common sense reasoning tasks, use 
 ```
