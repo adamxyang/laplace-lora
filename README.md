@@ -20,4 +20,8 @@ To run post-hoc Laplace approximation on checkpoints, use
 ``` 
 accelerate launch run_gpt_laplace.py
 ``` 
-or the bash file `run_gpt_laplace.bash` for submission to a slurm server. Set `laplace_sub` to `all` to use full Laplace-LoRA; set `laplace_sub` to `last_layer` to use last layer Laplace-LoRA. Similarly, set  `testing_set` argument to `val` to use Laplace model evidence on the full training set for optimizing Laplace prior precision; set `testing_set` argument to `train_val` to use minibatch gradient descent on the validation negative log-likelihood for optimizing Laplace prior precision.
+or the bash file 
+``
+bash run_gpt_laplace.bash
+``` 
+for submission to a slurm server. Set `laplace_sub` to `all` to use full Laplace-LoRA; set `laplace_sub` to `last_layer` to use last layer Laplace-LoRA. Similarly, set  `testing_set` argument to `val` to use Laplace model evidence on the full training set for optimizing Laplace prior precision; set `testing_set` argument to `train_val` to use minibatch gradient descent on the validation negative log-likelihood for optimizing Laplace prior precision.
