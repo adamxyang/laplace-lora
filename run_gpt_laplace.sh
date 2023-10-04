@@ -17,7 +17,7 @@ for laplace_prior in homo
 do
 for laplace_optim_step in 100
 do
-    /user/work/ad20999/infrastructure/blue_pebble/bin/lbatch -m 16 -c $c -g $g --gputype A100_80 -t $t --cmd accelerate launch run_gpt_laplace.py \
+    /user/work/ad20999/infrastructure/blue_pebble/bin/lbatch -m 16 -c $c -g $g -t $t --cmd accelerate launch run_gpt_laplace.py \
     --model_name_or_path $model \
     --task_name $task \
     --seed $seed \

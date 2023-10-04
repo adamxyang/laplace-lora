@@ -8,7 +8,7 @@ for task in winogrande_s ARC-Challenge ARC-Easy winogrande_m openbookqa boolq
 do
 for seed in 21 42 87
 do
-    /user/work/ad20999/infrastructure/blue_pebble/bin/lbatch -m 16 -c $c -g $g --gputype A100 -t $t --cmd accelerate launch run_gpt.py \
+    /user/work/ad20999/infrastructure/blue_pebble/bin/lbatch -m 16 -c $c -g $g -t $t --cmd accelerate launch run_gpt.py \
     --model_name_or_path $model \
     --task_name $task \
     --seed $seed \
