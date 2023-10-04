@@ -24,6 +24,8 @@ bash run_gpt.bash
 ``` 
 for submission to a slurm server. Customize training arguments like `lora_alpha`, `lora_r`, `lora_dropout`, etc. Set `testing_set` argument to `val` if using the full training set; set `testing_set` argument to `train_val` to split the training set into training and validation set.
 
+### Hyperparameters for LoRA fine-tuning
+There are several hyperparameters that can be tuned for LoRA fine-tuning, e.g. `lora_alpha`, `lora_r`, `lora_dropout`, `learning_rate`, etc.
 
 # Post-hoc Laplace-LoRA
 To run post-hoc Laplace approximation on saved checkpoints, use 
