@@ -551,7 +551,6 @@ def main():
         },
     ]
     optimizer = torch.optim.AdamW(optimizer_grouped_parameters, lr=args.learning_rate)
-    parameters_to_clip = [p for group in optimizer.param_groups for p in group['params']]
 
     lr_scheduler = get_scheduler(
         name=args.lr_scheduler_type,
@@ -747,7 +746,6 @@ def main():
             accelerator.backward(loss)
 
             if step % args.gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
-                parameters_to_clip = [p for group in optimizer.param_groups for p in group['params']]
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
