@@ -276,10 +276,10 @@ class BaseLaplace:
             torch.cuda.empty_cache()
 
 
-        elif method == 'CV':
+        elif method == 'val_gd':
             # replaces cross validation to batched gradient descent
             if val_loader is None:
-                raise ValueError('CV requires a validation set DataLoader')
+                raise ValueError('val_gd requires a validation set DataLoader')
             interval = torch.logspace(
                 log_prior_prec_min, log_prior_prec_max, grid_size
             )

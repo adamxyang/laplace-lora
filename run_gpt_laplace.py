@@ -184,7 +184,7 @@ def parse_args():
     parser.add_argument("--lora_dropout", type=float, default=0.1)
     parser.add_argument("--laplace_hessian", type=str, default='kron')
     parser.add_argument("--laplace_sub", type=str, default='last_layer')
-    parser.add_argument("--laplace_prior", type=str, default='homo', help='homo, hetero')
+    parser.add_argument("--laplace_prior", type=str, default='homo', help='homo')
     parser.add_argument("--laplace_optim_step", type=int, default=1000)
     parser.add_argument("--testing_set", type=str, default='train_val')
     parser.add_argument("--laplace_predict", type=str, default='mc_corr', help='probit bridge bridge_norm mc_indep mc_corr')
@@ -198,15 +198,10 @@ def parse_args():
         peft_method = 'lora_lmhead'
     if args.testing_set != 'val':
         peft_method += args.testing_set
-    
-        
 
     args.output_dir += f'/{args.task_name}/{args.model_name_or_path}_{peft_method}_{args.lora_alpha}_{args.lora_dropout}_{args.learning_rate}_{args.seed}'
     args.laplace_output_dir = f'outputs_laplace/{args.task_name}/{args.model_name_or_path}_{peft_method}_{args.lora_alpha}_{args.lora_dropout}_{args.learning_rate}_{args.seed}/'
     
-
-    if 'last_layer' in args.laplace_sub:
-        assert args.laplace_prior == 'homo'
 
     # Sanity checks
     if args.task_name is None and args.train_file is None and args.validation_file is None:
@@ -618,31 +613,20 @@ def main(load_step):
         metric = evaluate.load("accuracy", experiment_id=f"{laplace_output_dir}/prior_precision_{args.laplace_hessian}_{args.laplace_sub}_{args.laplace_prior}_{args.laplace_optim_step}")
 
 
-    if args.laplace_prior == 'hetero':
-        la = Laplace(model, 'classification',
-                        subset_of_weights='all',
-                        hessian_structure=args.laplace_hessian)
-    elif args.laplace_prior == 'homo':
-        la = Laplace(model, 'classification', prior_precision=1.,
-                        subset_of_weights='all',
-                        hessian_structure=args.laplace_hessian)
-    elif args.laplace_prior == 'hybrid':
-        if not args.use_bias:
-            prior_prec = torch.ones(2).to(accelerator.device)
-        else:
-            prior_prec = torch.ones(3).to(accelerator.device)
-        la = Laplace(model, 'classification', prior_precision=prior_prec,
-                        subset_of_weights='all',
-                        hessian_structure=args.laplace_hessian)
+    la = Laplace(model, 'classification', prior_precision=1.,
+                    subset_of_weights='all',
+                    hessian_structure=args.laplace_hessian)
+
 
     print('----fitting Laplace-----')
     la.fit(train_dataloader)
 
-    if args.testing_set != 'val':
-        prior_precision = la.optimize_prior_precision(method='CV', val_loader=val_dataloader, link_approx='mc', log_prior_prec_min=-3, log_prior_prec_max=4, grid_size=50, n_steps=args.laplace_optim_step, lr=1e-1)
-    else:
+    if args.testing_set == 'val':
         prior_precision = la.optimize_prior_precision(method='marglik', n_steps=args.laplace_optim_step, lr=1e-1)
-        print(f'prior precision: {prior_precision}')
+        print(f'prior precision: {prior_precision}')    
+    else:
+        prior_precision = la.optimize_prior_precision(method='val_gd', val_loader=val_dataloader, n_steps=args.laplace_optim_step, lr=1e-1)
+    
     torch.save(prior_precision, f'{laplace_output_dir}/prior_precision_{args.laplace_hessian}_{args.laplace_sub}_{args.laplace_prior}_{args.laplace_optim_step}.pt')
     print('prior precision', prior_precision)
 

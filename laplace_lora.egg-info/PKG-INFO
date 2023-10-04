@@ -1,11 +1,11 @@
 Metadata-Version: 2.1
-Name: laplace-torch
-Version: 0.1a2
-Summary: laplace - Laplace approximations for deep learning
-Home-page: https://github.com/AlexImmer/Laplace
-Author: Alex Immer
+Name: laplace-lora
+Version: 0.0.1
+Summary: laplace-lora: Bayesian low-rank adaptation for large language models
+Home-page: https://github.com/adamxyang/laplace-lora
+Author: Adam X. Yang
 License: MIT
-Project-URL: Bug Tracker, https://github.com/AlexImmer/Laplace/issues
+Project-URL: Bug Tracker, https://github.com/adamxyang/laplace-lora/issues
 Platform: any
 Classifier: Development Status :: 3 - Alpha
 Classifier: License :: OSI Approved :: MIT License
@@ -13,12 +13,17 @@ Classifier: Operating System :: OS Independent
 Classifier: Programming Language :: Python :: 3.8
 Classifier: Programming Language :: Python :: 3.9
 Description-Content-Type: text/markdown
-Provides-Extra: tests
-Provides-Extra: docs
 License-File: LICENSE
 
 # laplace-lora
-Bayesian low-rank adaptation for large language models
+Code for [Bayesian low-rank adaptation for large language models](https://arxiv.org/abs/2308.13111)
+
+This library is largely based on [Laplace](https://github.com/aleximmer/Laplace) and [ASDL](https://github.com/kazukiosawa/asdl/tree/master).
+
+Before installing laplace-lora, first install ASDL from source
+```
+pip install git+https://github.com/kazukiosawa/asdl
+```
 
 To install `laplace-lora`, change directory to `laplace-lora` and run 
 ```
@@ -35,7 +40,7 @@ bash run_gpt.bash
 ``` 
 for submission to a slurm server. Customize training arguments like `lora_alpha`, `lora_r`, `lora_dropout`, etc. Set `testing_set` argument to `val` if using the full training set; set `testing_set` argument to `train_val` to split the training set into training and validation set.
 
-To run post-hoc Laplace approximation on checkpoints, use 
+To run post-hoc Laplace approximation on saved checkpoints, use 
 ``` 
 accelerate launch run_gpt_laplace.py
 ``` 

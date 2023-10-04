@@ -1,7 +1,7 @@
 # laplace-lora
 Code for [Bayesian low-rank adaptation for large language models](https://arxiv.org/abs/2308.13111)
 
-This library is largely based on [ASDL](https://github.com/kazukiosawa/asdl/tree/master) and [Laplace](https://github.com/aleximmer/Laplace).
+This library is largely based on [Laplace](https://github.com/aleximmer/Laplace) and [ASDL](https://github.com/kazukiosawa/asdl/tree/master).
 
 Before installing laplace-lora, first install ASDL from source
 ```
