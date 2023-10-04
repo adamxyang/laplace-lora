@@ -20,7 +20,7 @@ accelerate launch run_gpt.py
 ``` 
 or the bash file 
 ```
-bash run_gpt.bash
+bash run_gpt.sh
 ``` 
 for submission to a slurm server. Customize training arguments like `lora_alpha`, `lora_r`, `lora_dropout`, etc. Set `testing_set` argument to `val` if using the full training set; set `testing_set` argument to `train_val` to split the training set into training and validation set.
 
@@ -36,7 +36,7 @@ accelerate launch run_gpt_laplace.py
 ``` 
 or the bash file 
 ```
-bash run_gpt_laplace.bash
+bash run_gpt_laplace.sh
 ``` 
 for submission to a slurm server.
 
