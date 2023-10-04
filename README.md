@@ -37,6 +37,6 @@ bash run_gpt_laplace.bash
 for submission to a slurm server.
 
 ### Hyperparameters for Laplace-LoRA
-To use full Laplace-LoRA, set `laplace_sub` argument to `all`; to use last-layer Laplace-LoRA, set `laplace_sub` argument to `last_layer`.
+To use full Laplace-LoRA, set the `laplace_sub` argument to `all`; to use last-layer Laplace-LoRA, set the `laplace_sub` argument to `last_layer`.
 
-To use the full training set and Laplace model evidence for optimizing Laplace prior precision, set  `testing_set` argument to `val`.
+To use the full training set and Laplace model evidence for optimizing Laplace prior precision, set  the `testing_set` argument to `val`; to split training set into a training set and a validation set and use minibatch gradient descent on the validation negative log-likelihood for optimizing Laplace prior precision, set the `testing_set` argument to `train_val`.
