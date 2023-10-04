@@ -187,8 +187,8 @@ def parse_args():
     parser.add_argument("--laplace_prior", type=str, default='homo', help='homo, hetero')
     parser.add_argument("--laplace_optim_step", type=int, default=1000)
     parser.add_argument("--testing_set", type=str, default='train_val')
-    parser.add_argument("--laplace_predict", type=str, default='mc_corr_100000', help='probit bridge bridge_norm mc_indep mc_corr')
-    parser.add_argument("--lm_head", action="store_true", default=False)
+    parser.add_argument("--laplace_predict", type=str, default='mc_corr', help='probit bridge bridge_norm mc_indep mc_corr')
+    parser.add_argument("--lm_head", action="store_true", default=True)
     args = parser.parse_args()
 
     print(args)
@@ -658,7 +658,7 @@ def main(load_step):
             f_mu_list.append(f_mu)
             f_var_list.append(f_var)
         
-        samples = int(args.laplace_predict.split('_')[-1])
+        samples = 100000
         f_mu = f_mu.expand(samples, -1, -1)
         f_var = f_var.expand(samples, -1, -1, -1)
 

@@ -1,6 +1,13 @@
 # laplace-lora
 Bayesian low-rank adaptation for large language models
 
+This library is largely based on ASDL and Laplace libraries.
+
+Before installing laplace-lora, first install ASDL from source
+```
+pip install git+https://github.com/kazukiosawa/asdl
+```
+
 To install `laplace-lora`, change directory to `laplace-lora` and run 
 ```
 pip install -e.
@@ -16,7 +23,7 @@ bash run_gpt.bash
 ``` 
 for submission to a slurm server. Customize training arguments like `lora_alpha`, `lora_r`, `lora_dropout`, etc. Set `testing_set` argument to `val` if using the full training set; set `testing_set` argument to `train_val` to split the training set into training and validation set.
 
-To run post-hoc Laplace approximation on checkpoints, use 
+To run post-hoc Laplace approximation on saved checkpoints, use 
 ``` 
 accelerate launch run_gpt_laplace.py
 ``` 
