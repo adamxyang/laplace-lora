@@ -215,9 +215,7 @@ class BaseLaplace:
 
     def optimize_prior_precision_base(self, pred_type, method='marglik', n_steps=100, lr=1e-1,
                                       init_prior_prec=1., val_loader=None, loss=get_nll,
-                                      log_prior_prec_min=-2, log_prior_prec_max=10, grid_size=500,
-                                      link_approx='probit', n_samples=100, verbose=False,
-                                      cv_loss_with_var=False):
+                                      link_approx='probit', n_samples=100, verbose=False):
         """Optimize the prior precision post-hoc using the `method`
         specified by the user.
 
@@ -239,15 +237,6 @@ class BaseLaplace:
             DataLoader for the validation set; each iterate is a training batch (X, y).
         loss : callable, default=get_nll
             loss function to use for CV.
-        cv_loss_with_var: bool, default=False
-            if true, `loss` takes three arguments `loss(output_mean, output_var, target)`,
-            otherwise, `loss` takes two arguments `loss(output_mean, target)`
-        log_prior_prec_min : float, default=-4
-            lower bound of gridsearch interval for CV.
-        log_prior_prec_max : float, default=4
-            upper bound of gridsearch interval for CV.
-        grid_size : int, default=100
-            number of values to consider inside the gridsearch interval for CV.
         link_approx : {'mc', 'probit', 'bridge'}, default='probit'
             how to approximate the classification link function for the `'glm'`.
             For `pred_type='nn'`, only `'mc'` is possible.
@@ -277,13 +266,9 @@ class BaseLaplace:
 
 
         elif method == 'val_gd':
-            # replaces cross validation to batched gradient descent
+            # batched gradient descent optimizing prior precision to maximize validation log-likelihood
             if val_loader is None:
                 raise ValueError('val_gd requires a validation set DataLoader')
-            interval = torch.logspace(
-                log_prior_prec_min, log_prior_prec_max, grid_size
-            )
-
             def divide_into_batches(data, batch_size):
                 return [data[i:i + batch_size] for i in range(0, len(data), batch_size)]
 
@@ -299,7 +284,6 @@ class BaseLaplace:
 
             batch_size = 8
 
-            # self.prior_precision = init_prior_prec
             log_prior_prec = self.prior_precision.log()
             log_prior_prec.requires_grad = True
             optimizer = torch.optim.Adam([log_prior_prec], lr=lr)
@@ -318,10 +302,7 @@ class BaseLaplace:
                     target = torch.tensor(target).to(self._device)
                     
                     optimizer.zero_grad()
-                    # self.prior_precision = torch.clamp(log_prior_prec.exp(), min=1e-4, max=1e5)
                     self.prior_precision = log_prior_prec.exp()
-
-                    # print('optimising prior precision', Js.shape, f_mu.shape, target.shape, self.posterior_precision.__len__())
 
                     f_var = self.functional_variance(Js.to(self._device))
                     f_mu = f_mu.expand(samples, -1, -1).to(self._device)
@@ -778,15 +759,12 @@ class ParametricLaplace(BaseLaplace):
 
     def optimize_prior_precision(self, method='marglik', pred_type='glm', n_steps=100, lr=1e-1,
                                  init_prior_prec=1., val_loader=None, loss=get_nll,
-                                 log_prior_prec_min=-4, log_prior_prec_max=4, grid_size=100,
-                                 link_approx='probit', n_samples=100, verbose=False,
-                                 cv_loss_with_var=False):
+                                 link_approx='probit', n_samples=100, verbose=False):
         assert pred_type in ['glm', 'nn']
         self.optimize_prior_precision_base(pred_type, method, n_steps, lr,
                                            init_prior_prec, val_loader, loss,
-                                           log_prior_prec_min, log_prior_prec_max,
-                                           grid_size, link_approx, n_samples,
-                                           verbose, cv_loss_with_var)
+                                           link_approx, n_samples,
+                                           verbose)
         return self.prior_precision
 
     @property
